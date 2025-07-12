@@ -1,9 +1,11 @@
 #include <raylib.h>
 #include <rlgl.h>
+#include <raymath.h>
 #include <glm/glm.hpp>
 #include <iostream>
 constexpr int ELLIPSE_VERTICES = 100;
 constexpr double EARTH_EQUATORIAL_RADIUS = 6378137.0;
+constexpr double EARTH_AXIAL_TILT = 0.40910517666747085283091311613373;
 constexpr double RENDER_SCALE = 1.0 / EARTH_EQUATORIAL_RADIUS;
 
 std::vector<glm::vec3> ellipse(float semiMajorAxis, float semiMinorAxis) {
@@ -36,6 +38,7 @@ int main() {
 
 	DisableCursor();
 
+	float earthAngle{ 0.0f };
 	while(!WindowShouldClose()) {
 		UpdateCamera(&camera, CAMERA_FREE);
 
@@ -43,6 +46,7 @@ int main() {
 		ClearBackground(RAYWHITE);
 		BeginMode3D(camera);
 
+		sphereModel.transform = MatrixMultiply(MatrixRotateY(earthAngle += 0.9f * GetFrameTime()), MatrixRotateZ(EARTH_AXIAL_TILT)); // raylib's wrong math
 		DrawModel(sphereModel, Vector3{ 0.0f, 0.0f, 0.0f }, RENDER_SCALE * EARTH_EQUATORIAL_RADIUS, WHITE);
 		DrawLine3D(Vector3{}, Vector3{ 5.0, 0.0, 0.0 }, RED);
 		DrawLine3D(Vector3{}, Vector3{ 0.0, 0.0, 5.0 }, BLUE);
